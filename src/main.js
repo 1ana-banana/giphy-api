@@ -5,12 +5,9 @@ import './css/styles.css';
 
 
 $(document).ready(function() {
-  $('#weatherLocation').click(function() {
-    const city = $('#location').val();
-    $('#location').val("");
-
+  $('#gifRando').click(function() {
     let request = new XMLHttpRequest();
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${process.env.API_KEY}`;
+    const url = `https://api.giphy.com/v1/gifs/random?tag=&rating=r&lang=en&api_key=${process.env.API_KEY}`;
 
     request.onreadystatechange = function() {
       if (this.readyState === 4 && this.status === 200) {
@@ -18,16 +15,33 @@ $(document).ready(function() {
         getElements(response);
       }
     };
-
+    
     request.open("GET", url, true);
     request.send();
-
+    
     function getElements(response) {
-      $('.showHumidity').text(`The humidity in ${city} is ${response.main.humidity}%`);
-      $('.showCurentTemp').text(`The temperature will be a high of ${response.main.temp_max} degrees and a low of ${response.main.temp_min} degrees, with the current being ${response.main.temp}.`);
-      $('.showHiLoTemp').text(`High of ${Math.round(response.main.temp_max)} degrees and a low of ${Math.round(response.main.temp_min)} degrees.`);
-      $('.showWind').text(`The wind is blowing at ${response.wind.speed} mph.`);
-      $('.showClouds').text(`The sky today will be ${response.weather[0].description}.`);
+      $('.showRando').html(`<img src="${response.data.images.original.url}">`);
+    }
+  });
+  $('#gif').click(function() {
+    const search = $('#search').val();
+    $('#search').val("");
+
+    let request2 = new XMLHttpRequest();
+    const url2 = `https://api.giphy.com/v1/gifs/search?q=${search}&limit=25&offset=0&rating=g&lang=en&api_key=${process.env.API_KEY}`;
+
+    request2.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        const response2 = JSON.parse(this.responseText);
+        getElements(response2);
+      }
+    };
+
+    request2.open("GET", url2, true);
+    request2.send();
+
+    function getElements(response2) {
+      $('.showGiphy').html(`<img src="${response2.data[0].images.original.url}">`);
     }
   });
 });
